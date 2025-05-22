@@ -6,15 +6,15 @@ function useCombatantsImpl() {
   const [combatants, setCombatants] = useState<Combatant[]>([]);
 
   const addCombatant = (c: Combatant) => setCombatants((prev) => [...prev, c]);
-  const removeCombatant = (id: number) =>
+  const removeCombatant = (id: string) =>
     setCombatants((prev) => prev.filter((c) => c.id !== id));
-  const damage = (id: number) =>
+  const damage = (id: string) =>
     setCombatants((prev) =>
       prev.map((c) =>
         c.id === id ? { ...c, currentHP: Math.max(0, c.currentHP - 1) } : c
       )
     );
-  const heal = (id: number) =>
+  const heal = (id: string) =>
     setCombatants((prev) =>
       prev.map((c) =>
         c.id === id ? { ...c, currentHP: Math.min(c.maxHP, c.currentHP + 1) } : c

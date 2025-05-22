@@ -1,5 +1,5 @@
 export interface Combatant {
-  id: number;
+  id: string;
   name: string;
   initiative: number;
   currentHP: number;
