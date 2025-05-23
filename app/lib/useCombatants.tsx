@@ -40,3 +40,5 @@ export function useCombatants() {
     throw new Error("useCombatants must be used within a CombatantProvider");
   return context;
 }
+
+export type CombatantActions = Omit<ReturnType<typeof useCombatantsImpl>, "combatants" | "setCombatants" | "addCombatant">;

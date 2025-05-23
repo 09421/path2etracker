@@ -3,12 +3,11 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Combatant } from "@/types/Combatant";
+import type { CombatantActions } from "../lib/useCombatants";
+import { useState } from "react";
 
-interface Props {
-  combatant: Combatant;
-  damage: (id: string) => void;
-  heal: (id: string) => void;
-  removeCombatant: (id: string) => void;
+interface Props extends CombatantActions{
+    combatant: Combatant
 }
 
 export function SortableCombatant({ combatant, damage, heal, removeCombatant }: Props) {
@@ -16,10 +15,21 @@ export function SortableCombatant({ combatant, damage, heal, removeCombatant }: 
     id: combatant.name,
   });
 
-  const style = {
+    const [hpChange, setHpChange] = useState<string>("");
+
+    const applyChange = () => {
+        const amount = parseInt(hpChange, 10);
+        if (!isNaN(amount)) {
+            if (amount < 0) damage(combatant.id, Math.abs(amount));
+            else if (amount > 0) heal(combatant.id, amount);
+        }
+        setHpChange(""); // clear after applying
+    };
+
+    const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-  };
+    };
 
     return (
         <div
@@ -38,7 +48,7 @@ export function SortableCombatant({ combatant, damage, heal, removeCombatant }: 
                 </p>
             </div>
             <div className="flex gap-2">
-                <button
+                {/* <button
                     onClick={(e) =>{e.stopPropagation(); damage(combatant.id)}}
                     className="bg-red-500 text-white px-2 py-1 rounded"
                 >
@@ -49,13 +59,33 @@ export function SortableCombatant({ combatant, damage, heal, removeCombatant }: 
                     className="bg-green-500 text-white px-2 py-1 rounded"
                 >
                     +
-                </button>
+                </button> */}
                 <button
                     onClick={(e) => {e.stopPropagation(); removeCombatant(combatant.id)}}
                     className="bg-gray-300 dark:bg-gray-700 dark:text-white px-2 py-1 rounded"
                 >
                     ✕
                 </button>
+            </div>
+
+            <div>
+                <input
+                    type="number"
+                    value={hpChange}
+                    onChange={(e) => setHpChange(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && applyChange()}
+                    className="w-20 px-2 py-1 border rounded"
+                    placeholder="+/- HP"
+                    />
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        applyChange();
+                    }}
+                className="bg-blue-500 text-white px-2 py-1 rounded"
+                >
+                    Apply
+                </button>                
             </div>
         </div>
     );
