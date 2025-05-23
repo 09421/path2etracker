@@ -18,7 +18,7 @@ import {
 import { SortableCombatant } from "./SortableCombatant";
 
 export function CombatantList() {
-  const { combatants, setCombatants, damage, heal, removeCombatant, currentTurnIndex, nextTurn, previousTurn } = useCombatants();
+  const { combatants, setCombatants, damage, heal, removeCombatant, currentTurnIndex, nextTurn } = useCombatants();
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -40,36 +40,21 @@ export function CombatantList() {
 const sortedCombatants = [...combatants].sort((a, b) => b.initiative - a.initiative);
 
 return (
-  <div>
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={sortedCombatants.map(c => c.name)} strategy={verticalListSortingStrategy}>
         <div className="space-y-4">
           {sortedCombatants.map((c, index) => (
-            <div
-              key={c.id}
-              className={`p-4 rounded shadow flex items-center justify-between transition-all
-                ${index === currentTurnIndex ? "bg-blue-100 dark:bg-blue-900" : "bg-white dark:bg-gray-800"}`}
-            >
               <SortableCombatant
                 key={c.id}
                 combatant={c}
                 damage={damage}
                 heal={heal}
                 removeCombatant={removeCombatant}
+                isActive={index === currentTurnIndex}
               />
-            </div>
           ))}
         </div>
       </SortableContext>
     </DndContext>
-    <div className="flex justify-end mb-4">
-      <button
-        onClick={nextTurn}
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-      >
-        Next Turn
-      </button>
-    </div>
-  </div>
-);
+  );
 }
