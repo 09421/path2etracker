@@ -1,33 +1,54 @@
 "use client";
+
 import { useCombatants } from "../lib/useCombatants";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { SortableCombatant } from "./SortableCombatant";
 
 export function CombatantList() {
-  const { combatants, damage, heal, removeCombatant } = useCombatants();
+  const { combatants, setCombatants, damage, heal, removeCombatant } = useCombatants();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor)
+  );
+
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
+    if (active.id !== over.id) {
+      const oldIndex = combatants.findIndex(c => c.name === active.id);
+      const newIndex = combatants.findIndex(c => c.name === over.id);
+      const newOrder = arrayMove(combatants, oldIndex, newIndex);
+      setCombatants(newOrder); // <-- persist it in your context
+    }
+  };
 
   return (
-    <div className="space-y-4">
-      {combatants.sort((a, b) => b.initiative - a.initiative).map((c) => (
-        <div key={c.id} className="bg-white p-4 rounded shadow flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-bold">{c.name}</h2>
-            <p>Initiative: {c.initiative}</p>
-            <p>
-              HP: {c.currentHP} / {c.maxHP}
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <button onClick={() => damage(c.id)} className="bg-red-500 text-white px-2 py-1 rounded">
-              -
-            </button>
-            <button onClick={() => heal(c.id)} className="bg-green-500 text-white px-2 py-1 rounded">
-              +
-            </button>
-            <button onClick={() => removeCombatant(c.id)} className="bg-gray-300 px-2 py-1 rounded">
-              ✕
-            </button>
-          </div>
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <SortableContext items={combatants.map(c => c.name)} strategy={verticalListSortingStrategy}>
+        <div className="space-y-4">
+          {combatants.map((c) => (
+            <SortableCombatant
+              key={c.id}
+              combatant={c}
+              damage={damage}
+              heal={heal}
+              removeCombatant={removeCombatant}
+            />
+          ))}
         </div>
-      ))}
-    </div>
+      </SortableContext>
+    </DndContext>
   );
 }

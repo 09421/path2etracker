@@ -16,7 +16,7 @@ export function AddCombatantForm() {
       name,
       initiative,
       maxHP,
-      currentHP: maxHP,
+      currentHP: maxHP
     });
     setName("");
     setInitiative(0);
