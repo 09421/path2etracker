@@ -4,6 +4,7 @@ import { Combatant } from "@/types/Combatant";
 
 function useCombatantsImpl() {
   const [combatants, setCombatants] = useState<Combatant[]>([]);
+  const [currentTurnIndex, setCurrentTurnIndex] = useState(0);
 
   const addCombatant = (c: Combatant) => setCombatants((prev) => [...prev, c]);
   
@@ -24,7 +25,18 @@ function useCombatantsImpl() {
       )
     );
 
-  return { combatants, setCombatants, addCombatant, removeCombatant, damage, heal };
+  const nextTurn = () => 
+    setCurrentTurnIndex((prev) => {
+      const len = combatants.length;
+      return len === 0 ? 0 : (prev + 1) % len;
+    });
+
+    const previousTurn = () =>
+      setCurrentTurnIndex((prev) =>
+        combatants.length === 0 ? 0 : (prev - 1 + combatants.length) % combatants.length
+    );
+
+  return { combatants, setCombatants, addCombatant, removeCombatant, damage, heal, currentTurnIndex, nextTurn, previousTurn };
 }
 
 const CombatantContext = createContext<ReturnType<typeof useCombatantsImpl> | null>(null);
@@ -41,4 +53,4 @@ export function useCombatants() {
   return context;
 }
 
-export type CombatantActions = Omit<ReturnType<typeof useCombatantsImpl>, "combatants" | "setCombatants" | "addCombatant">;
+export type CombatantActions = Omit<ReturnType<typeof useCombatantsImpl>, "combatants" | "setCombatants" | "addCombatant" | "currentTurnIndex" | "nextTurn" | "previousTurn">;
