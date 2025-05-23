@@ -8,6 +8,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragEndEvent
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -24,8 +25,10 @@ export function CombatantList() {
     useSensor(KeyboardSensor)
   );
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+    if (!over) return;
+    
     if (active.id !== over.id) {
       const oldIndex = combatants.findIndex(c => c.name === active.id);
       const newIndex = combatants.findIndex(c => c.name === over.id);

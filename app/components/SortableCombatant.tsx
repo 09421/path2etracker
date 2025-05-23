@@ -39,19 +39,19 @@ export function SortableCombatant({ combatant, damage, heal, removeCombatant }: 
             </div>
             <div className="flex gap-2">
                 <button
-                    onClick={(e) =>{e.stopPropagation; damage(combatant.id)}}
+                    onClick={(e) =>{e.stopPropagation(); damage(combatant.id)}}
                     className="bg-red-500 text-white px-2 py-1 rounded"
                 >
                     -
                 </button>
                 <button
-                    onClick={() => heal(combatant.id)}
+                    onClick={(e) => {e.stopPropagation(); heal(combatant.id)}}
                     className="bg-green-500 text-white px-2 py-1 rounded"
                 >
                     +
                 </button>
                 <button
-                    onClick={() => removeCombatant(combatant.id)}
+                    onClick={(e) => {e.stopPropagation(); removeCombatant(combatant.id)}}
                     className="bg-gray-300 dark:bg-gray-700 dark:text-white px-2 py-1 rounded"
                 >
                     ✕
