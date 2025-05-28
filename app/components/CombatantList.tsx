@@ -15,10 +15,11 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { useMemo } from "react";
 import { SortableCombatant } from "./SortableCombatant";
 
 export function CombatantList() {
-  const { combatants, setCombatants, damage, heal, removeCombatant, currentTurnIndex, nextTurn } = useCombatants();
+  const { combatants, setCombatants, damage, heal, removeCombatant, currentTurnIndex } = useCombatants();
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -38,6 +39,7 @@ export function CombatantList() {
   };
 
 const sortedCombatants = [...combatants].sort((a, b) => b.initiative - a.initiative);
+
 
 return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

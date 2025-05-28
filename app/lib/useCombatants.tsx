@@ -1,29 +1,29 @@
 "use client";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useCallback } from "react";
 import { Combatant } from "@/types/Combatant";
 
 function useCombatantsImpl() {
   const [combatants, setCombatants] = useState<Combatant[]>([]);
   const [currentTurnIndex, setCurrentTurnIndex] = useState(0);
 
-  const addCombatant = (c: Combatant) => setCombatants((prev) => [...prev, c]);
+  const addCombatant = useCallback((c: Combatant) => setCombatants((prev) => [...prev, c]), []);
   
-  const removeCombatant = (id: string) =>
-    setCombatants((prev) => prev.filter((c) => c.id !== id));
+  const removeCombatant = useCallback((id: string) =>
+    setCombatants((prev) => prev.filter((c) => c.id !== id)), []);
 
-  const damage = (id: string, amount: number = 1) =>
+  const damage = useCallback((id: string, amount: number = 1) =>
     setCombatants((prev) =>
       prev.map((c) =>
         c.id === id ? { ...c, currentHP: Math.max(0, c.currentHP - amount) } : c
       )
-    );
+    ), []);
 
-  const heal = (id: string, amount: number = 1) =>
+  const heal = useCallback((id: string, amount: number = 1) =>
     setCombatants((prev) =>
       prev.map((c) =>
         c.id === id ? { ...c, currentHP: Math.min(c.maxHP, c.currentHP + amount) } : c
       )
-    );
+    ), []);
 
   const nextTurn = () => 
     setCurrentTurnIndex((prev) => {
@@ -34,7 +34,7 @@ function useCombatantsImpl() {
     const previousTurn = () =>
       setCurrentTurnIndex((prev) =>
         combatants.length === 0 ? 0 : (prev - 1 + combatants.length) % combatants.length
-    );
+    )
 
   return { combatants, setCombatants, addCombatant, removeCombatant, damage, heal, currentTurnIndex, nextTurn, previousTurn };
 }
