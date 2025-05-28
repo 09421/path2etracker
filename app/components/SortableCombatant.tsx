@@ -6,13 +6,14 @@ import { Combatant } from "@/types/Combatant";
 import type { CombatantActions } from "../lib/useCombatants";
 import { useState } from "react";
 import { FaTrashAlt } from "react-icons/fa";
+import { memo } from "react";
 
 interface Props extends CombatantActions{
     combatant: Combatant
   isActive: boolean;
 }
 
-export function SortableCombatant({ combatant, damage, heal, removeCombatant, isActive }: Props) {
+export function SortableCombatantComponent({ combatant, damage, heal, removeCombatant, isActive }: Props) {
   const { attributes, listeners, setNodeRef, transform, transition, } = useSortable({
     id: combatant.name,
   });
@@ -82,3 +83,5 @@ export function SortableCombatant({ combatant, damage, heal, removeCombatant, is
         </div>
     );
 }
+
+export const SortableCombatant = memo(SortableCombatantComponent);

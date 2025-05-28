@@ -15,7 +15,6 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { useMemo } from "react";
 import { SortableCombatant } from "./SortableCombatant";
 
 export function CombatantList() {
